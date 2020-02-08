@@ -1,0 +1,46 @@
+version: "3.7"
+
+services:
+  dev:
+    image: gradle:6.0.1-jdk11
+    working_dir: /app
+    volumes:
+      - .:/app
+      - gradle-cache:/home/gradle/.gradle
+    networks:
+      - app_net
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: todo
+      DB_USER: user
+      DB_PASSWORD: password
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_JPA_SHOW_SQL: 'true'
+    ports:
+      - 8080:8080
+      - 5005:5005
+    command: gradle bootRun
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:11.5
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: todo
+    networks:
+      - app_net
+    volumes:
+      - db-cache:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+networks:
+  app_net:
+
+volumes:
+  gradle-cache:
+  db-cache:
