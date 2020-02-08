@@ -2,6 +2,9 @@ plugins {
 	id 'org.springframework.boot' version '2.2.4.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+	id 'checkstyle'
+	id 'pmd'
+	id 'jacoco'
 }
 
 group = 'com.dytes'
@@ -22,6 +25,34 @@ repositories {
 	mavenCentral()
 }
 
+checkstyle {
+	toolVersion = '8.29'
+	configFile = file('config/checkstyle.xml')
+	maxWarnings = 0
+	maxErrors = 0
+}
+
+jacoco {
+	toolVersion = "0.8.4"
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled false
+		html.enabled true
+	}
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			limit {
+				minimum = 0.0 // Set a proper coverage target
+			}
+		}
+	}
+}
+
 dependencies {
 	implementation 'com.google.guava:guava:28.0-jre'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -39,8 +70,29 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
-}
+	testImplementation 'org.hamcrest:hamcrest:2.2'}
 
 test {
 	useJUnitPlatform()
+	exclude "com/dytes/todo/integration/**"
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+task integrationTest(type: org.gradle.api.tasks.testing.Test) {
+	useJUnitPlatform()
+	include "com/dytes/todo/integration/**"
+
+	beforeTest { descriptor ->
+		logger.lifecycle("Running test: " + descriptor)
+	}
+
+	onOutput { descriptor, event ->
+		logger.lifecycle(event.message)
+	}
+}
+
+check {
+	dependsOn 'integrationTest'
 }
