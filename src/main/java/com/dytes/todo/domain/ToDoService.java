@@ -38,20 +38,26 @@ public class ToDoService {
 
     @Transactional
     public void addSubTask(UUID todoId, String subTaskTitle) {
-        var todoOpt = toDoRepository.getById(todoId);
+        var todo = toDoRepository.getById(todoId)
+            .orElseThrow(() -> new RuntimeException("ToDo not found: " + todoId));
 
-        if (todoOpt.isPresent()) {
-            var todo = todoOpt.get();
-            var subTask = todo.addSubtask(subTaskTitle);
-            toDoRepository.save(todo);
+        var subTask = todo.addSubtask(subTaskTitle);
+        toDoRepository.save(todo);
 
-            domainEventPublisher.publish(new SubtaskAddedEvent(todoId, subTask.getId()));
-        } else {
-            throw new RuntimeException("ToDo not found: " + todoId);
-        }
+        domainEventPublisher.publish(new SubtaskAddedEvent(todoId, subTask.getId()));
     }
 
     public Optional<ToDo> getById(UUID todoId) {
         return toDoRepository.getById(todoId);
+    }
+
+    public void updateSubTask(UUID todoId, UUID subTaskId, boolean done) {
+        var todo = toDoRepository.getById(todoId)
+            .orElseThrow(() -> new RuntimeException("ToDo not found: " + todoId));
+
+        todo.markSubTaskDone(subTaskId, done);
+        toDoRepository.save(todo);
+
+        domainEventPublisher.publish(new SubTaskUpdateEvent(todoId, subTaskId));
     }
 }

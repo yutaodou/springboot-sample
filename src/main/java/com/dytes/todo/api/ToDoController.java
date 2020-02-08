@@ -41,4 +41,12 @@ public class ToDoController {
         toDoService.addSubTask(todoId, request.getSubtask());
         return ToDoDTO.fromToDo(toDoService.getById(todoId).get());
     }
+
+    @PostMapping("/{todoId}/subtasks/{subTaskId}")
+    public ToDoDTO updateSubTask(@PathVariable UUID todoId,
+                                 @PathVariable UUID subTaskId,
+                                 UpdateSubTaskRequest request) {
+        toDoService.updateSubTask(todoId, subTaskId, request.isDone());
+        return ToDoDTO.fromToDo(toDoService.getById(todoId).get());
+    }
 }
