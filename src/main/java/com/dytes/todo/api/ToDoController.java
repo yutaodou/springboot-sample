@@ -3,12 +3,10 @@ package com.dytes.todo.api;
 import com.dytes.todo.domain.ToDo;
 import com.dytes.todo.domain.ToDoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.stream.Collectors.toList;
 
@@ -36,5 +34,11 @@ public class ToDoController {
     public ToDoDTO createToDo(CreateToDoRequest request) {
         ToDo toDo = toDoService.createToDo(request.title);
         return ToDoDTO.fromToDo(toDo);
+    }
+
+    @PostMapping("/{todoId}/subtasks")
+    public ToDoDTO addSubTask(@PathVariable UUID todoId, AddSubTaskRequest request) {
+        toDoService.addSubTask(todoId, request.getSubtask());
+        return ToDoDTO.fromToDo(toDoService.getById(todoId).get());
     }
 }

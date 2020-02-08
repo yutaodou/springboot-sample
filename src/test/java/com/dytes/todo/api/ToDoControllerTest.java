@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +25,7 @@ class ToDoControllerTest {
 
     @Test
     void shouldReturnListOfToDo() {
-        ToDo todo = ToDo.builder().id(UUID.randomUUID()).title("test todo").dueDate(LocalDate.now()).build();
+        ToDo todo = ToDo.builder().id(UUID.randomUUID()).title("test todo").build();
         List<ToDo> todoList = List.of(todo);
         when(toDoService.findAll()).thenReturn(todoList);
 
@@ -36,6 +35,5 @@ class ToDoControllerTest {
         var actual = todos.get(0);
         assertThat(actual.getId()).isEqualTo(todo.getId());
         assertThat(actual.getTitle()).isEqualTo(todo.getTitle());
-        assertThat(actual.getDueDate()).isEqualTo(todo.getDueDate());
     }
 }

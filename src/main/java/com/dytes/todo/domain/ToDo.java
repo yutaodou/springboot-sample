@@ -5,10 +5,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "todo")
@@ -18,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ToDo {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -29,4 +30,19 @@ public class ToDo {
 
     @LastModifiedDate
     private OffsetDateTime updatedAt;
+
+    @OneToMany(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "todo_id")
+    @Builder.Default
+    private List<SubTask> subTasks = new ArrayList<>();
+
+    public SubTask addSubtask(String title) {
+        var subtask = SubTask.builder().todoId(this.id).title(title).done(false).build();
+        if (subTasks == null) {
+            subTasks = new ArrayList<>();
+        }
+        subTasks.add(subtask);
+
+        return subtask;
+    }
 }
