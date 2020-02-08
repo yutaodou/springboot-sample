@@ -60,6 +60,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.postgresql:postgresql:42.2.8'
+	implementation 'org.flywaydb:flyway-core:5.+'
 
 	compileOnly 'org.projectlombok:lombok'
 
@@ -93,6 +94,10 @@ task integrationTest(type: org.gradle.api.tasks.testing.Test) {
 	onOutput { descriptor, event ->
 		logger.lifecycle(event.message)
 	}
+}
+
+bootRun {
+	jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005"]
 }
 
 check {
