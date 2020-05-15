@@ -1,5 +1,6 @@
 package com.dytes.todo.domain;
 
+import com.dytes.todo.infrastructure.todo.ToDoRepository;
 import com.dytes.todo.share.event.DomainEventPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

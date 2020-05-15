@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   dev:
-    image: gradle:6.0.1-jdk11
+    image: gradle:6.4-jdk14
     working_dir: /app
     volumes:
       - .:/app
